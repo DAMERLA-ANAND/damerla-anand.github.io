@@ -261,70 +261,71 @@ section[id] {
 .hero-section {
   position: relative;
   width: 100%;
-  height: 100vh;
-  min-height: 680px;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: clamp(84px, 10vh, 124px) clamp(12px, 3vw, 36px) clamp(28px, 5vh, 48px);
+  isolation: isolate;
+}
+
+.hero-section.hero-actual {
   background: var(--deep-maroon);
 }
 
-.hero-canvas {
-  position: absolute;
-  inset: 0;
+.hero-section.hero-mobile {
+  background:
+    radial-gradient(circle at 20% 12%, rgba(212, 165, 116, 0.25), transparent 40%),
+    radial-gradient(circle at 80% 10%, rgba(200, 150, 12, 0.2), transparent 36%),
+    linear-gradient(165deg, #3d0a0a 0%, #4b1112 52%, #2d0909 100%);
 }
 
-.hero-overlay {
+.hero-section.hero-mobile::before {
+  content: '';
   position: absolute;
   inset: 0;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 120px 20px 80px;
-  gap: 10px;
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(253, 248, 240, 0.06) 0,
+      rgba(253, 248, 240, 0.06) 2px,
+      transparent 2px,
+      transparent 16px
+    );
+  opacity: 0.24;
+  z-index: 1;
   pointer-events: none;
 }
 
-.hero-blessing {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 15px;
-  letter-spacing: 0.3em;
-  color: var(--mauve);
-  text-transform: uppercase;
+.home-view-frame {
+  width: min(96vw, 1320px);
+  position: relative;
+  z-index: 2;
+  border-radius: clamp(14px, 2vw, 28px);
+  border: 1px solid rgba(232, 192, 96, 0.42);
+  overflow: hidden;
+  background: rgba(20, 4, 4, 0.86);
+  box-shadow: 0 20px 48px rgba(14, 4, 4, 0.42);
 }
 
-.hero-name {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: clamp(38px, 6vw, 72px);
-  line-height: 1;
+.new_Home_Actual_view {
+  width: min(96vw, 1320px);
 }
 
-.hero-name.bride {
-  color: var(--jasmine-white);
+.new_Home_Mobile_view {
+  width: min(94vw, 460px);
 }
 
-.hero-weds {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 22px;
-  letter-spacing: 0.2em;
-  color: var(--mauve);
-  text-transform: lowercase;
+.home-view-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  max-height: calc(100dvh - 130px);
 }
 
-.hero-time {
-  color: var(--gold-light);
-  font-family: 'Cormorant Garamond', serif;
-  letter-spacing: 0.15em;
-  font-size: 18px;
-}
-
-.hero-venue {
-  color: var(--mauve);
-  font-size: 16px;
-  font-style: italic;
+.hero-mobile .home-view-image {
+  max-height: calc(100dvh - 98px);
 }
 
 .marquee-wrap {
@@ -1056,6 +1057,10 @@ section[id] {
     letter-spacing: 0.08em;
   }
 
+  .new_Home_Actual_view {
+    width: min(95vw, 980px);
+  }
+
   .section {
     padding: 88px 22px 74px;
   }
@@ -1125,22 +1130,20 @@ section[id] {
   }
 
   .hero-section {
-    height: 50vh;
-    min-height: 500px;
+    padding-top: max(76px, env(safe-area-inset-top));
+    padding-bottom: 22px;
   }
 
-  .hero-overlay {
-    padding: 84px 14px 44px;
-    gap: 7px;
+  .new_Home_Mobile_view {
+    width: min(94vw, 460px);
   }
 
-  .hero-blessing {
-    letter-spacing: 0.2em;
-    font-size: 13px;
+  .home-view-frame {
+    border-radius: 18px;
   }
 
-  .hero-time {
-    font-size: 15px;
+  .home-view-image {
+    max-height: calc(100dvh - 92px);
   }
 
   .marquee-track {
@@ -1197,8 +1200,8 @@ section[id] {
 }
 
 @media (max-width: 480px) {
-  .hero-name {
-    font-size: 38px;
+  .new_Home_Mobile_view {
+    width: min(95vw, 420px);
   }
 
   .section-heading h3 {

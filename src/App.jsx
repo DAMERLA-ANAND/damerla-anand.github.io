@@ -116,6 +116,9 @@ function App() {
 
   const [showSplash, setShowSplash] = useState(true);
   const [showCounters, setShowCounters] = useState(true);
+  const [isMobileHomeView, setIsMobileHomeView] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false
+  );
   const [displayCounts, setDisplayCounts] = useState({
     mangalasnanam: '—',
     pellikuthuru: '—',
@@ -203,6 +206,21 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const mobileMedia = window.matchMedia('(max-width: 767px)');
+
+    const handleMediaChange = (event) => {
+      setIsMobileHomeView(event.matches);
+    };
+
+    setIsMobileHomeView(mobileMedia.matches);
+    mobileMedia.addEventListener('change', handleMediaChange);
+
+    return () => {
+      mobileMedia.removeEventListener('change', handleMediaChange);
+    };
+  }, []);
+
+  useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const applyMotionPreference = () => {
@@ -278,29 +296,27 @@ function App() {
       });
 
       gsap.fromTo(
-        '.hero-name.bride',
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, delay: 0.4, duration: 1, ease: 'power3.out' }
+        '.home-view-frame',
+        { y: 36, opacity: 0, scale: 0.98 },
+        { y: 0, opacity: 1, scale: 1, delay: 0.45, duration: 1, ease: 'power3.out' }
       );
-      gsap.fromTo('.hero-weds', { opacity: 0 }, { opacity: 1, delay: 0.75, duration: 0.6 });
-      gsap.fromTo(
-        '.hero-name.groom',
-        { y: -50, opacity: 0 },
-        { y: 0, opacity: 1, delay: 1, duration: 1, ease: 'power3.out' }
-      );
-      gsap.fromTo('.hero-time', { opacity: 0 }, { opacity: 1, delay: 1.3, duration: 0.6 });
-      gsap.fromTo('.hero-venue', { opacity: 0 }, { opacity: 1, delay: 1.5, duration: 0.6 });
     });
 
     return () => splashCtx.revert();
   }, []);
 
   useEffect(() => {
+    if (isMobileHomeView) return undefined;
+
     const container = heroCanvasRef.current;
     if (!container) return undefined;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: false,
+      powerPreference: 'high-performance'
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 1200 ? 1.5 : 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x3d0a0a);
     container.appendChild(renderer.domElement);
@@ -389,7 +405,7 @@ function App() {
     buildGopuram(-9, 0.6);
     buildGopuram(9, 0.6);
 
-    const particleCount = 150;
+    const particleCount = window.innerWidth < 1200 ? 110 : 150;
     const particlePositions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i += 1) {
       particlePositions[i * 3] = (Math.random() - 0.5) * 60;
@@ -487,7 +503,7 @@ function App() {
         container.removeChild(renderer.domElement);
       }
     };
-  }, []);
+  }, [isMobileHomeView]);
 
   useEffect(() => {
     const container = venueCanvasRef.current;
@@ -807,11 +823,13 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (isMobileHomeView) return undefined;
+
     const canvas = flowerCanvasRef.current;
     if (!canvas) return undefined;
 
     const ctx = canvas.getContext('2d');
-    const particleTotal = window.innerWidth < 768 ? 14 : 30;
+    const particleTotal = window.innerWidth < 1200 ? 20 : 30;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -931,7 +949,7 @@ function App() {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [isMobileHomeView]);
 
   return (
     <div className="site-shell">
@@ -961,7 +979,7 @@ function App() {
         </div>
       )}
 
-      <canvas className="flower-overlay" ref={flowerCanvasRef} />
+      {!isMobileHomeView && <canvas className="flower-overlay" ref={flowerCanvasRef} />}
       <div id="cursor-dot" />
       <div id="cursor-ring" />
 
@@ -1003,32 +1021,16 @@ function App() {
         </div>
       </header>
 
-      <section id="hero" className="hero-section">
-        <div className="hero-canvas" ref={heroCanvasRef} />
-
-        <div className="hero-overlay">
-          <Ganesha size={58} color="var(--burgundy)" />
-
-          <svg width="220" height="16" viewBox="0 0 220 16" className="kolam-thin" aria-hidden="true">
-            <path
-              className="kolam-path"
-              d="M5 8H86m48 0h81M86 8l12-6 12 6-12 6-12-6zm24 0l12-6 12 6-12 6-12-6z"
-              fill="none"
-              stroke="var(--gold-light)"
-              strokeWidth="1"
-            />
-          </svg>
-
-          <p className="hero-blessing">Om Shree Ganeshaya Namah</p>
-          <Monogram />
-
-          <h2 className="hero-name bride">Lakshmi Naga Saisree</h2>
-          <p className="hero-weds">weds</p>
-          <h2 className="hero-name groom gold-shimmer">Sri Anoop</h2>
-          <LotusDivider width={150} stroke="var(--gold-light)" />
-
-          <p className="hero-time">Sunday · 12th April 2026 · 07:11 AM</p>
-          <p className="hero-venue">Gold Conventions, Machilipatnam</p>
+      <section id="hero" className={`hero-section ${isMobileHomeView ? 'hero-mobile' : 'hero-actual'}`}>
+        <div className={`home-view-frame ${isMobileHomeView ? 'new_Home_Mobile_view' : 'new_Home_Actual_view'}`}>
+          <img
+            className="home-view-image"
+            src={isMobileHomeView ? '/assets/new_Home_Mobile_view.jpg' : '/assets/new_Home_Actual_view.jpeg'}
+            alt="Wedding invitation first page"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
         </div>
       </section>
 
