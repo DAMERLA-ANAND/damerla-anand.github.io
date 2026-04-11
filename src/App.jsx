@@ -271,6 +271,11 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShowSplash(false);
+      return undefined;
+    }
+
     const splashCtx = gsap.context(() => {
       gsap.fromTo(
         splashGaneshRef.current,
@@ -1400,6 +1405,37 @@ function App() {
         <p className="telugu footer-telugu">శుభ వివాహ శుభాకాంక్షలు</p>
         <p className="footer-note">With love &amp; blessings from both families</p>
       </footer>
+
+      <div className="floating-actions" aria-label="Quick actions">
+        <a
+          className="floating-action upload-action"
+          href="https://drive.google.com/drive/folders/1IFuUxncp3Db7z_hfS4VQfYpGrbl01y5N"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Upload Photos"
+          data-tooltip="Upload Photos"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6.3 5.2h2.3l1.1-1.6h4.6l1.1 1.6h2.3A2.3 2.3 0 0 1 20 7.5v10.2a2.3 2.3 0 0 1-2.3 2.3H6.3A2.3 2.3 0 0 1 4 17.7V7.5a2.3 2.3 0 0 1 2.3-2.3Zm5.7 3.2a4.6 4.6 0 1 0 0 9.2 4.6 4.6 0 0 0 0-9.2Zm0 2a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2Z" fill="currentColor" />
+          </svg>
+        </a>
+
+        <a
+          className="floating-action live-action"
+          href="https://youtube.com/live/rtLaQ1Mbuy0?feature=shared"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Watch Live"
+          data-tooltip="Watch Live"
+        >
+          <img
+            className="live-icon-image"
+            src="/assets/youtube-icon-illustration-youtube-app-logo-social-media-icon_561158-3674.avif"
+            alt=""
+            aria-hidden="true"
+          />
+        </a>
+      </div>
     </div>
   );
 }
